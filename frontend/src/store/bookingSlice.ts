@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface Movie {
   _id: string;
@@ -43,7 +44,7 @@ const getInitialState = (): BookingState => {
       return parsed;
     }
   } catch (e) {
-    console.error("Failed to load state from localStorage:", e);
+    console.error(e);
   }
   return {
     selectedMovie: null,
@@ -52,7 +53,7 @@ const getInitialState = (): BookingState => {
     selectedTheatre: "",
     selectedShowtime: null,
     selectedSeats: [],
-    bookingFee: 20, // flat fee of ₹20
+    bookingFee: 20,
   };
 };
 
@@ -62,7 +63,6 @@ const bookingSlice = createSlice({
   reducers: {
     selectMovie: (state, action: PayloadAction<Movie>) => {
       state.selectedMovie = action.payload;
-      // Reset subsequent flow selections on movie change
       state.selectedFormat = action.payload.formats[0] || "2D";
       state.selectedDate = "";
       state.selectedTheatre = "";
@@ -93,7 +93,6 @@ const bookingSlice = createSlice({
       if (state.selectedSeats.includes(seat)) {
         state.selectedSeats = state.selectedSeats.filter(s => s !== seat);
       } else {
-        // Limit to max 6 seats
         if (state.selectedSeats.length < 6) {
           state.selectedSeats.push(seat);
         }

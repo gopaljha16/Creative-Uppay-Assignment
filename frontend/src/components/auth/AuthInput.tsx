@@ -10,7 +10,6 @@ interface AuthInputProps {
   autoComplete?: string;
 }
 
-/** Underline-only input matching the Figma design. */
 const AuthInput: React.FC<AuthInputProps> = ({
   id,
   type,

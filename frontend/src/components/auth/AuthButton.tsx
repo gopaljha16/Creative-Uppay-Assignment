@@ -11,7 +11,6 @@ interface AuthButtonProps {
   onClick?: () => void;
 }
 
-/** Primary action button with loading spinner. */
 const AuthButton: React.FC<AuthButtonProps> = ({
   id,
   label,

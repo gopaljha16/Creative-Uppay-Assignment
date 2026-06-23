@@ -11,8 +11,8 @@ const seatSchema = new mongoose.Schema({
 const showtimeSchema = new mongoose.Schema({
   movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie", required: true },
   theatreName: { type: String, required: true },
-  date: { type: String, required: true }, // "YYYY-MM-DD"
-  time: { type: String, required: true }, // "HH:MM"
+  date: { type: String, required: true },
+  time: { type: String, required: true },
   format: { type: String, enum: ["2D", "3D", "IMAX"], default: "2D" },
   price: { type: Number, required: true },
   seats: [seatSchema]

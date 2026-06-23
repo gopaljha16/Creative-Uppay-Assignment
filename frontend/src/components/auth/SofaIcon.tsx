@@ -1,6 +1,5 @@
 import React from "react";
 
-/** Exact Figma sofa icon — two cinema seats. */
 const SofaIcon: React.FC = () => (
   <svg
     width="104"

@@ -8,8 +8,8 @@ import SchedulingPage from "./pages/SchedulingPage";
 import SeatSelectionPage from "./pages/SeatSelectionPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import BookingsPage from "./pages/BookingsPage";
+import ProfilePage from "./pages/ProfilePage";
 
-/* ── Protected Route wrapper ── */
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isSignedIn, isLoaded } = useAuth();
 
@@ -96,6 +96,15 @@ const App: React.FC = () => {
         element={
           <ProtectedRoute>
             <BookingsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

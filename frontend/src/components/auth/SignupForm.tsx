@@ -4,7 +4,6 @@ import AuthInput from "./AuthInput";
 import AuthButton from "./AuthButton";
 import ErrorBanner from "./ErrorBanner";
 
-/* ── Sign Up Form Props ── */
 interface SignupFormProps {
   name: string;
   email: string;
@@ -19,7 +18,6 @@ interface SignupFormProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-/** Sign-up form — purely presentational. */
 export const SignupForm: React.FC<SignupFormProps> = ({
   name,
   email,
@@ -66,9 +64,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       onChange={(e) => onConfirmChange(e.target.value)}
       autoComplete="new-password"
     />
-
     {error && <ErrorBanner message={error} />}
-
     <AuthButton
       id="signup-submit"
       label="Sign Up"
@@ -78,7 +74,6 @@ export const SignupForm: React.FC<SignupFormProps> = ({
   </form>
 );
 
-/* ── Verify Form Props ── */
 interface VerifyFormProps {
   email: string;
   code: string;
@@ -88,7 +83,6 @@ interface VerifyFormProps {
   onBack: () => void;
 }
 
-/** Email verification step — shown after signup. */
 export const VerifyForm: React.FC<VerifyFormProps> = ({
   email,
   code,
@@ -112,7 +106,6 @@ export const VerifyForm: React.FC<VerifyFormProps> = ({
         <strong style={{ color: "#5555d8" }}>{email}</strong>
       </p>
     </div>
-
     <AuthInput
       id="verify-code"
       type="text"
@@ -121,16 +114,13 @@ export const VerifyForm: React.FC<VerifyFormProps> = ({
       onChange={(e) => onCodeChange(e.target.value)}
       autoComplete="one-time-code"
     />
-
     {error && <ErrorBanner message={error} />}
-
     <AuthButton
       id="verify-submit"
       label="Verify Email"
       loadingLabel="Verifying…"
       loading={false}
     />
-
     <button type="button" onClick={onBack} style={linkBtnStyle}>
       ← Back to sign up
     </button>

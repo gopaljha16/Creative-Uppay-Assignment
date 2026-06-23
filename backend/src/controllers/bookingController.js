@@ -43,14 +43,22 @@ function validateExpiry(expiry) {
 }
 
 exports.createBooking = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  let session = null;
 
   try {
-    const { showtimeId, seats, userId, userEmail, totalPrice, paymentMethod, cardDetails } = req.body;
+    const { showtimeId, seats, userId, userEmail, paymentMethod, cardDetails } = req.body;
 
-    if (!showtimeId || !seats || !seats.length || !userId || !totalPrice) {
+    if (!showtimeId || !Array.isArray(seats) || !seats.length || !userId) {
       return res.status(400).json({ success: false, message: "Missing required booking details." });
+    }
+
+    const uniqueSeats = [...new Set(seats)];
+    const hasInvalidSeat = uniqueSeats.some((seat) => !/^[A-M](?:[1-9]|1[0-2])$/.test(seat));
+    if (hasInvalidSeat || uniqueSeats.length !== seats.length || uniqueSeats.length > 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Select between 1 and 6 unique seats using rows A-M and columns 1-12."
+      });
     }
 
     if (paymentMethod === "card") {
@@ -77,20 +85,27 @@ exports.createBooking = async (req, res) => {
         return res.status(400).json({ success: false, message: "CVV must be exactly 3 digits." });
       }
 
-      if (cvv === "999" || digitsOnlyCard === "4000000000000000") {
+      if (cvv === "999" || digitsOnlyCard === "4000000000000002") {
         throw new Error("SIMULATED_PAYMENT_FAILURE");
       }
     }
 
+    session = await mongoose.startSession();
+    session.startTransaction();
+
     const showtime = await Showtime.findById(showtimeId).session(session);
     if (!showtime) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ success: false, message: "Showtime not found." });
     }
 
+    const bookingFee = 20;
+    const totalPrice = (uniqueSeats.length * showtime.price) + bookingFee;
     const unavailableSeats = [];
     const now = new Date();
 
-    seats.forEach(seatCode => {
+    uniqueSeats.forEach(seatCode => {
       const row = seatCode.charAt(0);
       const col = parseInt(seatCode.substring(1), 10);
       const seat = showtime.seats.find(s => s.row === row && s.col === col);
@@ -114,7 +129,7 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    seats.forEach(seatCode => {
+    uniqueSeats.forEach(seatCode => {
       const row = seatCode.charAt(0);
       const col = parseInt(seatCode.substring(1), 10);
       const seat = showtime.seats.find(s => s.row === row && s.col === col);
@@ -132,7 +147,7 @@ exports.createBooking = async (req, res) => {
       userId,
       userEmail,
       showtimeId,
-      seats,
+      seats: uniqueSeats,
       totalPrice,
       paymentStatus: "paid",
       transactionId
@@ -150,8 +165,10 @@ exports.createBooking = async (req, res) => {
     });
 
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    if (session) {
+      await session.abortTransaction();
+      session.endSession();
+    }
 
     if (error.message === "SIMULATED_PAYMENT_FAILURE") {
       try {
@@ -193,7 +210,7 @@ exports.getBookingsByUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "userId query param is required." });
     }
 
-    const bookings = await Booking.find({ userId, paymentStatus: "paid" })
+    const bookings = await Booking.find({ userId, paymentStatus: { $in: ["paid", "cancelled"] } })
       .populate({
         path: "showtimeId",
         populate: { path: "movieId" }
@@ -207,16 +224,25 @@ exports.getBookingsByUser = async (req, res) => {
 };
 
 exports.cancelBooking = async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ success: false, message: "userId is required." });
+  }
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const booking = await Booking.findById(req.params.id).session(session);
+    const booking = await Booking.findOne({ _id: req.params.id, userId }).session(session);
     if (!booking) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ success: false, message: "Booking not found." });
     }
 
     if (booking.paymentStatus === "cancelled") {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ success: false, message: "Booking is already cancelled." });
     }
 

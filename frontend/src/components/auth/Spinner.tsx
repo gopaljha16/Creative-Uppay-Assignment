@@ -1,6 +1,5 @@
 import React from "react";
 
-/** Loading spinner — used in buttons and loading states. */
 const Spinner: React.FC = () => (
   <svg
     className="animate-spin"

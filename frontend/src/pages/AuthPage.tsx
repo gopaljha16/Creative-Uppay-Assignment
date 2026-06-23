@@ -1,42 +1,26 @@
 import React, { useState } from "react";
-
-/* ── Hooks ── */
 import { useAuthSession } from "../hooks/useAuthSession";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { useSignupForm } from "../hooks/useSignupForm";
-
-/* ── Components ── */
 import SofaIcon from "../components/auth/SofaIcon";
 import AuthTabs from "../components/auth/AuthTabs";
 import LoginForm from "../components/auth/LoginForm";
 import { SignupForm, VerifyForm } from "../components/auth/SignupForm";
 import Spinner from "../components/auth/Spinner";
-
-/* ── Styles ── */
 import { pageStyle, loaderPageStyle, cardStyle, titleStyle } from "../components/auth/auth.styles";
 
-/**
- * Auth page — thin orchestrator that composes reusable hooks + components.
- * All Clerk logic lives in hooks; all UI lives in components.
- */
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
-
-  /* Session management — clears stale sessions before form renders */
   const { ready, ensureSignedOut } = useAuthSession();
-
-  /* Form hooks — all auth logic encapsulated */
   const login = useLoginForm(ensureSignedOut);
   const signup = useSignupForm(ensureSignedOut);
 
-  /* Reset errors when switching tabs */
   const handleTabChange = (tab: "login" | "signup") => {
     setActiveTab(tab);
     login.setError("");
     signup.setError("");
   };
 
-  /* ── Loading state while clearing stale sessions ── */
   if (!ready) {
     return (
       <div style={loaderPageStyle}>
@@ -50,14 +34,10 @@ const AuthPage: React.FC = () => {
     <div style={pageStyle}>
       <div style={cardStyle}>
         <SofaIcon />
-
         <h1 style={titleStyle}>
           Creative Upaay<br />Hiring Assignment
         </h1>
-
         <AuthTabs activeTab={activeTab} onTabChange={handleTabChange} />
-
-        {/* ── Login ── */}
         {activeTab === "login" && (
           <LoginForm
             email={login.email}
@@ -69,8 +49,6 @@ const AuthPage: React.FC = () => {
             onSubmit={login.handleLogin}
           />
         )}
-
-        {/* ── Sign Up ── */}
         {activeTab === "signup" && !signup.pendingVerification && (
           <SignupForm
             name={signup.name}
@@ -86,8 +64,6 @@ const AuthPage: React.FC = () => {
             onSubmit={signup.handleSignUp}
           />
         )}
-
-        {/* ── Email Verification ── */}
         {activeTab === "signup" && signup.pendingVerification && (
           <VerifyForm
             email={signup.email}

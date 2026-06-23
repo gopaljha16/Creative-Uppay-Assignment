@@ -1,22 +1,14 @@
 @import "tailwindcss";
 
-/* ─────────────────────────────────────────────
-   Global Reset
-───────────────────────────────────────────── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-/* ─────────────────────────────────────────────
-   Base
-───────────────────────────────────────────── */
 html {
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  background: #0f0f1a;           /* outer gutter colour */
+  background: #121214;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
@@ -24,28 +16,35 @@ html {
 
 body {
   height: 100%;
-  background: #0f0f1a;           /* keep gutter dark on all sides */
+  background: #121214;
   display: flex;
-  justify-content: center;       /* horizontally centre the 390px shell */
+  justify-content: center;
 }
 
-/* ─────────────────────────────────────────────
-   390px Mobile Shell  ← THE single source of truth
-   Every page / component renders inside this.
-   Nothing ever bleeds past 390px.
-───────────────────────────────────────────── */
 #root {
   width: 100%;
-  max-width: 390px;              /* ← hard cap — never wider than a phone */
+  max-width: 390px;
   min-height: 100%;
-  background: #1c1c2e;           /* app background */
+  background: #f8f9fe;
   position: relative;
-  overflow-x: hidden;            /* belt-and-suspenders: clip any overflow */
+  overflow-x: hidden;
 }
 
-/* ─────────────────────────────────────────────
-   Scrollbar
-───────────────────────────────────────────── */
-::-webkit-scrollbar        { width: 3px; }
-::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: #5b4fcf; border-radius: 99px; }
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #5e4feb;
+  border-radius: 99px;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

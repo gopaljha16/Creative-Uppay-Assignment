@@ -7,65 +7,65 @@ require("dotenv").config();
 const moviesData = [
   {
     title: "Meg 2: The Trench",
-    bannerUrl: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=800&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=400&q=80",
+    bannerUrl: "https://image.tmdb.org/t/p/w1280/qlxy8yo5bcgUw2KAmmojUKp4rHd.jpg",
+    posterUrl: "https://image.tmdb.org/t/p/w500/4m1L6B62M5sNlWw3c1D2sX8rFf.jpg",
     description: "A research team encounters multiple threats while exploring the depths of the ocean, including a malevolent mining operation and colossal prehistoric predators.",
     genre: "Action, Sci-Fi, Horror",
     duration: "1h 56m",
     rating: "PG-13",
     releaseDate: new Date("2026-06-10"),
     cast: [
-      { name: "Jason Statham", role: "Jonas Taylor", imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" },
-      { name: "Jing Wu", role: "Jiuming Zhang", imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" },
-      { name: "Shuya Sophia Cai", role: "Meiying", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" }
+      { name: "Jason Statham", role: "Jonas Taylor", imageUrl: "https://image.tmdb.org/t/p/w185/lldeQ91GwIVff43JBrpdbAAeYWj.jpg" },
+      { name: "Jing Wu", role: "Jiuming Zhang", imageUrl: "https://image.tmdb.org/t/p/w185/cFuATO6PnffJXtsYF7BRqhCXlwe.jpg" },
+      { name: "Shuya Sophia Cai", role: "Meiying", imageUrl: "https://image.tmdb.org/t/p/w185/8zzSyNhoFJQ3eRqaqIgiryoONJB.jpg" }
     ],
     formats: ["2D", "3D"],
     status: "now-showing"
   },
   {
     title: "The Nun II",
-    bannerUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+    bannerUrl: "https://image.tmdb.org/t/p/w1280/4HodYYKEIs4g94hF3lX31h35YtB.jpg",
+    posterUrl: "https://image.tmdb.org/t/p/w500/5gqr4bLpFZLVVjhcT8246hZpL9L.jpg",
     description: "1956 – France. A priest is murdered. An evil is spreading. The sequel to the worldwide smash hit follows Sister Irene as she once again comes face-to-face with Valak, the demon nun.",
     genre: "Horror",
     duration: "1h 50m",
     rating: "A",
     releaseDate: new Date("2026-09-08"),
     cast: [
-      { name: "Taissa Farmiga", role: "Sister Irene", imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" }
+      { name: "Taissa Farmiga", role: "Sister Irene", imageUrl: "https://image.tmdb.org/t/p/w185/kC2Movbs6uEF8DdDhvyHizQHuru.jpg" }
     ],
     formats: ["2D"],
     status: "now-showing"
   },
   {
     title: "Fast X",
-    bannerUrl: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80",
+    bannerUrl: "https://image.tmdb.org/t/p/w1280/2e7fc8eNwLXZ5Uvehvl3xj8wVyv.jpg",
+    posterUrl: "https://image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
     description: "Dom Toretto and his family must protect themselves from a new lethal adversary who is fueled by a blood-soaked revenge from the past.",
     genre: "Action, Adventure",
     duration: "2h 21m",
     rating: "UA",
     releaseDate: new Date("2026-05-19"),
     cast: [
-      { name: "Vin Diesel", role: "Dominic Toretto", imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80" }
+      { name: "Vin Diesel", role: "Dominic Toretto", imageUrl: "https://image.tmdb.org/t/p/w185/nZdVry7lnUkE24PnXakok9okvL4.jpg" }
     ],
     formats: ["2D", "3D", "IMAX"],
-    status: "now-showing"
+    status: "coming-soon"
   },
   {
     title: "John Wick: Chapter 4",
-    bannerUrl: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=800&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=400&q=80",
+    bannerUrl: "https://image.tmdb.org/t/p/w1280/h8gHn0OzBoaefsYseUByqsmEDMY.jpg",
+    posterUrl: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
     description: "John Wick uncovers a path to defeating The High Table. But before he can earn his freedom, Wick must face off against a new enemy with powerful alliances.",
     genre: "Action, Thriller",
     duration: "2h 49m",
     rating: "A",
     releaseDate: new Date("2026-03-24"),
     cast: [
-      { name: "Keanu Reeves", role: "John Wick", imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80" }
+      { name: "Keanu Reeves", role: "John Wick", imageUrl: "https://image.tmdb.org/t/p/w185/kEoUZKEG7dzbCESDjd0CKAN1r0n.jpg" }
     ],
     formats: ["2D", "IMAX"],
-    status: "now-showing"
+    status: "coming-soon"
   }
 ];
 

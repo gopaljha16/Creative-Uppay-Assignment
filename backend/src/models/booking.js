@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, // Clerk User ID
+  userId: { type: String, required: true },
   userEmail: { type: String },
   showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: "Showtime", required: true },
-  seats: [{ type: String, required: true }], // e.g. ["A3", "A4"]
+  seats: [{ type: String, required: true }],
   totalPrice: { type: Number, required: true },
-  paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
+  paymentStatus: { type: String, enum: ["pending", "paid", "failed", "cancelled"], default: "pending" },
   transactionId: { type: String, required: true },
   bookingDate: { type: Date, default: Date.now }
 }, {

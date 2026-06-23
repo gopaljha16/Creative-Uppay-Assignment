@@ -1,18 +1,12 @@
 import React from "react";
 
-/**
- * All shared style constants for auth screens.
- * Single source of truth — no inline style duplication across components.
- */
-
-/* ── Page Layout ── */
 export const pageStyle: React.CSSProperties = {
   minHeight: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   padding: "24px 16px",
-  background: "#1c1c2e",
+  background: "#f8f9fe",
 };
 
 export const loaderPageStyle: React.CSSProperties = {
@@ -22,37 +16,34 @@ export const loaderPageStyle: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   gap: "12px",
-  background: "#1c1c2e",
+  background: "#f8f9fe",
 };
 
-/* ── Card ── */
 export const cardStyle: React.CSSProperties = {
-  background: "#f0f0f8",
+  background: "#f8f9fe",
   borderRadius: "16px",
   padding: "36px 28px 32px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   width: "100%",
-  boxShadow: "0 8px 40px rgba(0,0,0,0.35)",
+  boxShadow: "none",
 };
 
-/* ── Title ── */
 export const titleStyle: React.CSSProperties = {
   marginTop: "16px",
   textAlign: "center",
   fontWeight: 800,
   fontSize: "18px",
   lineHeight: "1.4",
-  color: "#111",
+  color: "#0f172a",
 };
 
-/* ── Tabs ── */
 export const tabContainerStyle: React.CSSProperties = {
   display: "flex",
   width: "100%",
   marginTop: "28px",
-  background: "#dcdce8",
+  background: "#e4e4eb",
   borderRadius: "8px",
   padding: "3px",
 };
@@ -72,19 +63,18 @@ export const activeTabStyle: React.CSSProperties = {
   ...tabBase,
   fontWeight: 700,
   background: "#ffffff",
-  color: "#111",
-  boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+  color: "#0f172a",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 };
 
 export const inactiveTabStyle: React.CSSProperties = {
   ...tabBase,
   fontWeight: 500,
   background: "transparent",
-  color: "#888",
+  color: "#64748b",
   boxShadow: "none",
 };
 
-/* ── Form ── */
 export const formStyle: React.CSSProperties = {
   width: "100%",
   display: "flex",
@@ -93,27 +83,25 @@ export const formStyle: React.CSSProperties = {
   marginTop: "28px",
 };
 
-/* ── Input ── */
 export const inputStyle: React.CSSProperties = {
   width: "100%",
   background: "transparent",
   border: "none",
-  borderBottom: "1.5px solid #c8c8d8",
+  borderBottom: "1.5px solid #cbd5e1",
   outline: "none",
   fontSize: "14px",
-  color: "#333",
+  color: "#0f172a",
   padding: "8px 0",
   fontFamily: "inherit",
 };
 
-export const INPUT_FOCUS_COLOR = "#5555cc";
-export const INPUT_BLUR_COLOR = "#c8c8d8";
+export const INPUT_FOCUS_COLOR = "#5e4feb";
+export const INPUT_BLUR_COLOR = "#cbd5e1";
 
-/* ── Button ── */
 export const btnStyle: React.CSSProperties = {
   width: "100%",
   padding: "14px",
-  background: "#5555d8",
+  background: "#5e4feb",
   color: "#fff",
   border: "none",
   borderRadius: "8px",
@@ -128,7 +116,6 @@ export const btnStyle: React.CSSProperties = {
   transition: "background 0.18s",
 };
 
-/* ── Error ── */
 export const errorStyle: React.CSSProperties = {
   width: "100%",
   background: "#fff0f0",
@@ -139,11 +126,10 @@ export const errorStyle: React.CSSProperties = {
   fontSize: "12px",
 };
 
-/* ── Link Button (back to signup etc.) ── */
 export const linkBtnStyle: React.CSSProperties = {
   background: "none",
   border: "none",
-  color: "#aaa",
+  color: "#64748b",
   fontSize: "12px",
   textDecoration: "underline",
   cursor: "pointer",

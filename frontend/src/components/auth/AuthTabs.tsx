@@ -8,7 +8,6 @@ interface AuthTabsProps {
   onTabChange: (tab: AuthTab) => void;
 }
 
-/** Login / Sign Up toggle matching the Figma pill design. */
 const AuthTabs: React.FC<AuthTabsProps> = ({ activeTab, onTabChange }) => (
   <div style={tabContainerStyle}>
     {(["login", "signup"] as const).map((tab) => (

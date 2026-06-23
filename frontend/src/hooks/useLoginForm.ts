@@ -3,11 +3,6 @@ import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
 import { extractClerkError } from "../utils/clerkError";
 
-/**
- * Encapsulates all login form state and the submit handler.
- *
- * @param ensureSignedOut — from useAuthSession, clears stale sessions before auth
- */
 export function useLoginForm(ensureSignedOut: () => Promise<void>) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

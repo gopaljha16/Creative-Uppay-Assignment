@@ -14,7 +14,9 @@ interface LoginFormProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-/** Login form — purely presentational, all logic lives in useLoginForm hook. */
+const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
+const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
+
 const LoginForm: React.FC<LoginFormProps> = ({
   email,
   password,
@@ -41,12 +43,28 @@ const LoginForm: React.FC<LoginFormProps> = ({
       onChange={(e) => onPasswordChange(e.target.value)}
       autoComplete="current-password"
     />
-
+    {demoEmail && demoPassword && (
+      <button
+        type="button"
+        onClick={() => {
+          onEmailChange(demoEmail);
+          onPasswordChange(demoPassword);
+        }}
+        style={{
+          border: "1px solid rgba(124, 92, 255, 0.35)",
+          borderRadius: 10,
+          padding: "9px 12px",
+          background: "rgba(124, 92, 255, 0.08)",
+          color: "#b8a9ff",
+          fontSize: 11,
+          cursor: "pointer",
+        }}
+      >
+        Use demo account: {demoEmail}
+      </button>
+    )}
     {error && <ErrorBanner message={error} />}
-
-    {/* Spacer to push button down like Figma */}
     <div style={{ flex: 1 }} />
-
     <AuthButton
       id="login-submit"
       label="Login"

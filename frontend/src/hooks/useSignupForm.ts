@@ -3,13 +3,7 @@ import { useSignUp } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
 import { extractClerkError } from "../utils/clerkError";
 
-/**
- * Encapsulates all signup + email verification state and handlers.
- *
- * @param ensureSignedOut — from useAuthSession, clears stale sessions before auth
- */
 export function useSignupForm(ensureSignedOut: () => Promise<void>) {
-  /* Signup fields */
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +11,6 @@ export function useSignupForm(ensureSignedOut: () => Promise<void>) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* Verification */
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState("");
@@ -25,7 +18,6 @@ export function useSignupForm(ensureSignedOut: () => Promise<void>) {
   const { signUp, setActive, isLoaded } = useSignUp();
   const navigate = useNavigate();
 
-  /* ── Submit signup ── */
   const handleSignUp = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -61,7 +53,6 @@ export function useSignupForm(ensureSignedOut: () => Promise<void>) {
     [name, email, password, confirmPassword, isLoaded, signUp, ensureSignedOut]
   );
 
-  /* ── Verify email code ── */
   const handleVerify = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -83,7 +74,6 @@ export function useSignupForm(ensureSignedOut: () => Promise<void>) {
     [code, isLoaded, signUp, setActive, navigate]
   );
 
-  /* ── Go back from verification to signup form ── */
   const goBackToSignup = useCallback(() => {
     setPendingVerification(false);
   }, []);

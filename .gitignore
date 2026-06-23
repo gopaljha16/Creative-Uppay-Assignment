@@ -28,3 +28,7 @@ dist-ssr
 .env.*
 .env.local
 
+
+# Commit safe environment templates
+!.env.example
+!**/.env.example

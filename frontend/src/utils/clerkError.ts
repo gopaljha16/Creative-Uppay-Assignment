@@ -1,7 +1,3 @@
-/**
- * Extract a human-readable error message from Clerk API errors.
- * Falls back to a provided default message.
- */
 export function extractClerkError(err: unknown, fallback: string): string {
   if (
     err &&

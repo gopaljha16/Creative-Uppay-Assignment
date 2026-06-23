@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "seed": "node src/utils/seeder.js",
+    "check": "node --check src/index.js && node --check src/controllers/bookingController.js && node --check src/controllers/showtimeController.js"
   },
   "keywords": [],
   "author": "",
