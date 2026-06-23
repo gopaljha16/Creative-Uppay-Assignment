@@ -106,13 +106,3 @@ npm start
 - `GET /api/bookings?userId=...`
 - `POST /api/bookings/:id/cancel`
 
-## Deployment
-
-- Deploy `frontend` to Netlify or Vercel and set all `VITE_*` variables at build time. A Netlify SPA redirect is included.
-- Deploy `backend` to Render or Railway and set `DATABASE_URL` and `PORT`. Use the deployment URL as `VITE_API_URL`.
-- Seed the production database once after deployment.
-- Configure the deployed frontend origin and redirect URLs in Clerk.
-
-## Submission checklist
-
-Before sharing the repository, verify the live happy path and declined-payment path, create the demo Clerk user, and record the required video showing refresh persistence, checkout, booking history, cancellation, and the released seat becoming available again.
