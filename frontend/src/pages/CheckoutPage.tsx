@@ -444,7 +444,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-slate-900 font-medium block">Amount Paid:</span>
-                  <span className="mt-1 block text-slate-500 font-medium">?{grandTotal}</span>
+                  <span className="mt-1 block text-slate-500 font-medium">₹{grandTotal}</span>
                 </div>
               </div>
 
