@@ -7,34 +7,8 @@ import { API_URL } from "../config";
 import type { RootState } from "../store/store";
 import { clearBooking } from "../store/bookingSlice";
 import BottomNavigation from "../components/common/BottomNavigation";
-
-const QRCode: React.FC = () => {
-  return (
-    <svg width="70" height="70" viewBox="0 0 100 100" className="bg-white p-1.5 rounded-xl shadow-sm text-black">
-      <rect x="5" y="5" width="25" height="25" fill="currentColor" />
-      <rect x="10" y="10" width="15" height="15" fill="white" />
-      <rect x="13" y="13" width="9" height="9" fill="currentColor" />
-      <rect x="70" y="5" width="25" height="25" fill="currentColor" />
-      <rect x="75" y="10" width="15" height="15" fill="white" />
-      <rect x="78" y="13" width="9" height="9" fill="currentColor" />
-      <rect x="5" y="70" width="25" height="25" fill="currentColor" />
-      <rect x="10" y="75" width="15" height="15" fill="white" />
-      <rect x="13" y="78" width="9" height="9" fill="currentColor" />
-      <rect x="70" y="70" width="10" height="10" fill="currentColor" />
-      <rect x="73" y="73" width="4" height="4" fill="white" />
-      <rect x="75" y="75" width="2" height="2" fill="currentColor" />
-      <rect x="35" y="5" width="5" height="5" fill="currentColor" /><rect x="45" y="5" width="10" height="5" fill="currentColor" /><rect x="60" y="5" width="5" height="5" fill="currentColor" />
-      <rect x="35" y="15" width="15" height="5" fill="currentColor" /><rect x="55" y="15" width="5" height="5" fill="currentColor" />
-      <rect x="40" y="25" width="5" height="5" fill="currentColor" /><rect x="50" y="25" width="15" height="5" fill="currentColor" />
-      <rect x="5" y="35" width="5" height="15" fill="currentColor" /><rect x="20" y="35" width="10" height="5" fill="currentColor" /><rect x="35" y="35" width="5" height="5" fill="currentColor" /><rect x="45" y="35" width="15" height="5" fill="currentColor" /><rect x="70" y="35" width="5" height="5" fill="currentColor" /><rect x="80" y="35" width="15" height="5" fill="currentColor" />
-      <rect x="10" y="45" width="5" height="5" fill="currentColor" /><rect x="25" y="45" width="5" height="5" fill="currentColor" /><rect x="40" y="45" width="10" height="5" fill="currentColor" /><rect x="60" y="45" width="5" height="5" fill="currentColor" /><rect x="75" y="45" width="10" height="5" fill="currentColor" />
-      <rect x="5" y="55" width="15" height="5" fill="currentColor" /><rect x="30" y="55" width="5" height="5" fill="currentColor" /><rect x="50" y="55" width="15" height="5" fill="currentColor" /><rect x="70" y="55" width="5" height="5" fill="currentColor" /><rect x="85" y="55" width="10" height="5" fill="currentColor" />
-      <rect x="35" y="70" width="10" height="5" fill="currentColor" /><rect x="55" y="70" width="5" height="5" fill="currentColor" />
-      <rect x="35" y="80" width="5" height="10" fill="currentColor" /><rect x="45" y="80" width="10" height="5" fill="currentColor" /><rect x="60" y="80" width="5" height="5" fill="currentColor" /><rect x="85" y="80" width="10" height="5" fill="currentColor" />
-      <rect x="50" y="90" width="15" height="5" fill="currentColor" /><rect x="75" y="90" width="5" height="5" fill="currentColor" />
-    </svg>
-  );
-};
+import TicketQRCode from "../components/common/TicketQRCode";
+import { applyMovieArtwork } from "../utils/movieArtwork";
 
 const isValidCardNumber = (cardNumber: string) => {
   const digits = cardNumber.replace(/\D/g, "");
@@ -71,7 +45,7 @@ const CheckoutPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [transactionId, setTransactionId] = useState("");
+  const [, setTransactionId] = useState("");
 
   if (!selectedMovie || !selectedShowtime || selectedSeats.length === 0) {
     return (
@@ -84,6 +58,7 @@ const CheckoutPage: React.FC = () => {
     );
   }
 
+  const displayMovie = applyMovieArtwork(selectedMovie);
   const ticketsCost = selectedSeats.length * selectedShowtime.price;
   const grandTotal = ticketsCost + bookingFee;
 
@@ -237,8 +212,8 @@ const CheckoutPage: React.FC = () => {
 
             <div className="relative h-[150px] w-full rounded-2xl overflow-hidden mt-4 border border-slate-100 shadow-sm bg-slate-100">
               <img
-                src={selectedMovie.bannerUrl}
-                alt={selectedMovie.title}
+                src={displayMovie.bannerUrl || displayMovie.posterUrl}
+                alt={displayMovie.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -246,7 +221,7 @@ const CheckoutPage: React.FC = () => {
                 <span className="px-1.5 py-0.5 rounded bg-[#5e4feb] text-white text-[8px] font-black uppercase">
                   {selectedShowtime.format}
                 </span>
-                <h2 className="text-sm font-black text-white mt-1">{selectedMovie.title}</h2>
+                <h2 className="text-sm font-black text-white mt-1">{displayMovie.title}</h2>
               </div>
             </div>
 
@@ -431,45 +406,55 @@ const CheckoutPage: React.FC = () => {
           <h1 className="text-base font-black text-slate-900 mt-4">Payment Successful!</h1>
           <p className="text-[10px] text-slate-400 mt-1 font-semibold">Your seats have been booked permanently.</p>
 
-          <div className="mt-8 bg-white text-slate-900 rounded-3xl p-5 w-full flex flex-col gap-4 text-left relative overflow-hidden shadow-md border border-slate-100">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#5e4feb] to-indigo-600" />
+          <div className="mt-6 bg-white text-slate-900 rounded-md w-full text-left overflow-hidden shadow-sm border border-slate-200">
+            <img
+              src={displayMovie.bannerUrl || displayMovie.posterUrl}
+              alt={displayMovie.title}
+              className="h-[157px] w-full object-cover"
+            />
 
-            <div>
-              <span className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Movie Ticket</span>
-              <h2 className="text-base font-black text-slate-800 leading-tight mt-0.5">{selectedMovie.title}</h2>
-            </div>
+            <div className="p-5">
+              <h2 className="text-base font-black text-slate-900 leading-tight">{displayMovie.title}</h2>
 
-            <div className="grid grid-cols-2 gap-4 text-[10px] border-t border-slate-50 pt-3.5">
-              <div>
-                <span className="text-slate-400 block font-bold">THEATRE</span>
-                <span className="text-slate-800 font-bold leading-tight block mt-0.5">{selectedTheatre}</span>
+              <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <div>
+                  <span className="text-slate-900 font-medium block">{selectedTheatre}</span>
+                </div>
+                <div>
+                  <span className="text-slate-900 font-medium block">Screen 1 - {selectedShowtime.format}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium block">{formattedDate}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium block">{selectedShowtime.time}</span>
+                </div>
               </div>
-              <div>
-                <span className="text-slate-400 block font-bold">SHOWTIME</span>
-                <span className="text-slate-800 font-bold block mt-0.5">Screen 1 • {selectedShowtime.time}</span>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 text-[10px]">
-              <div>
-                <span className="text-slate-400 block font-bold">DATE</span>
-                <span className="text-slate-800 font-bold block mt-0.5">{formattedDate}</span>
+              <div className="mt-5 grid grid-cols-2 gap-x-8 text-sm">
+                <div>
+                  <span className="text-slate-900 font-medium block">Seats:</span>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {selectedSeats.map((seat) => (
+                      <span key={seat} className="rounded-md bg-slate-500 px-2 py-1 text-xs font-bold text-white">
+                        {seat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-slate-900 font-medium block">Amount Paid:</span>
+                  <span className="mt-1 block text-slate-500 font-medium">?{grandTotal}</span>
+                </div>
               </div>
-              <div>
-                <span className="text-slate-400 block font-bold">FORMAT</span>
-                <span className="text-slate-800 font-black block mt-0.5">{selectedShowtime.format}</span>
-              </div>
-            </div>
 
-            <div className="flex items-center justify-between border-t border-slate-50 pt-3.5">
-              <div className="text-[10px]">
-                <span className="text-slate-400 block font-bold">SEATS</span>
-                <span className="text-base font-black text-[#5e4feb] mt-0.5 block">{selectedSeats.join(", ")}</span>
-
-                <span className="text-slate-400 block font-bold mt-2.5">TRANSACTION ID</span>
-                <span className="text-[9px] font-mono text-slate-600 mt-0.5 block">{transactionId}</span>
+              <div className="mt-4 flex items-end justify-between gap-4">
+                <div className="text-sm text-slate-500 font-medium leading-tight">
+                  <span className="block">Transaction Date:</span>
+                  <span className="block">10/9/2023 10:45 AM</span>
+                </div>
+                <TicketQRCode size={88} />
               </div>
-              <QRCode />
             </div>
           </div>
 
@@ -520,3 +505,4 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
+

@@ -86,7 +86,7 @@ const SeatSelectionPage: React.FC = () => {
     );
   }
 
-  const seatRows = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"];
+  const seatRows = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M"];
 
   const handleSeatClick = (seatCode: string, seatStatus: string) => {
     if (seatStatus === "occupied") return;
@@ -163,7 +163,7 @@ const SeatSelectionPage: React.FC = () => {
           key={seatCode}
           disabled={isOccupied}
           onClick={() => handleSeatClick(seatCode, isOccupied ? "occupied" : "available")}
-          className={`w-6 h-6 rounded-md text-[8px] font-bold flex items-center justify-center transition-all ${seatClass}`}
+          className={`w-6 h-6 rounded-md text-[10px] font-medium flex items-center justify-center transition-all ${seatClass}`}
         >
           {c}
         </button>
@@ -171,48 +171,59 @@ const SeatSelectionPage: React.FC = () => {
     }
 
     return (
-      <div key={rowLabel} className="flex items-center gap-1">
-        <span className="w-4 text-[9px] font-black text-slate-400 text-left">{rowLabel}</span>
-        <div className="flex gap-1.5 justify-center flex-1">
+      <div key={rowLabel} className={`flex items-center gap-3 ${rowLabel === "J" ? "mt-8" : ""}`}>
+        <span className="w-3 text-sm font-medium text-slate-900 text-left">{rowLabel}</span>
+        <div className="flex gap-2 justify-start flex-1">
           {seatsInRow}
         </div>
-        <span className="w-4 text-[9px] font-black text-slate-400 text-right">{rowLabel}</span>
       </div>
     );
   };
 
   return (
     <div className="min-h-screen bg-[#f8f9fe] text-slate-900 pb-[140px] relative">
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white">
+      <div className="px-4 pt-5 pb-3 flex items-center justify-between bg-[#f8f9fe]">
         <button
           onClick={() => navigate(`/schedule/${movie?._id}`)}
-          className="text-xs text-slate-400 flex items-center gap-1 hover:text-slate-600 font-bold"
+          className="text-sm text-slate-900 flex items-center gap-2 font-medium"
         >
-          <ArrowLeft size={14} /> Back
+          <ArrowLeft size={18} /> Back
         </button>
-        <div className="text-right">
-          <span className="text-[10px] text-slate-400 font-bold block">Total Price</span>
-          <span className="text-sm font-black text-[#5e4feb]">₹{currentTotalPrice}</span>
+        <button
+          type="button"
+          onClick={() => navigate(`/schedule/${movie?._id}`)}
+          className="text-sm font-medium text-slate-500"
+        >
+          Cancel
+        </button>
+      </div>
+
+      <div className="px-4 bg-[#f8f9fe]">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+          <div className="h-full w-3/5 rounded-full bg-[#5e4feb]" />
         </div>
       </div>
 
-      <div className="px-4 py-3 bg-white">
-        <h1 className="text-sm font-black text-slate-900">Select Seats</h1>
-        <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
-          Screen 1 • {showtime.time}
-        </p>
+      <div className="px-4 pt-6 pb-4 bg-[#f8f9fe] flex items-start justify-between">
+        <div>
+          <h1 className="text-lg font-black text-slate-900">Select Seats</h1>
+          <p className="mt-1 text-sm font-bold text-slate-900">
+            Screen 1 <span className="ml-3 text-[#4f46e5]">{showtime.time}</span>
+          </p>
+        </div>
+        <span className="mt-8 text-sm font-black text-slate-900">₹{currentTotalPrice}</span>
       </div>
 
-      <div className="w-full flex flex-col items-center mt-6 mb-6">
-        <svg className="w-[80%] h-3 text-slate-200" viewBox="0 0 100 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 9C30 3 70 3 95 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <div className="w-full flex flex-col items-center mt-4 mb-5">
+        <svg className="w-[88%] h-4 text-slate-300" viewBox="0 0 100 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 9C30 3 70 3 95 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        <span className="text-[9px] uppercase tracking-widest text-slate-400 font-black mt-1">Screen</span>
+        <span className="text-xs uppercase tracking-widest text-slate-500 font-medium mt-1">SCREEN</span>
       </div>
 
-      <div className="px-4 flex flex-col gap-2 mt-4 select-none">
-        <div className="flex flex-col gap-2">
-          {seatRows.map((row) => renderRow(row, 12))}
+      <div className="px-4 flex flex-col gap-2 mt-4 select-none overflow-x-auto scrollbar-none">
+        <div className="flex min-w-max flex-col gap-2">
+          {seatRows.map((row) => renderRow(row, ["A", "B", "C", "D", "E", "F", "G", "H"].includes(row) ? 10 : 12))}
         </div>
       </div>
 
@@ -230,14 +241,6 @@ const SeatSelectionPage: React.FC = () => {
           <span>Selected</span>
         </div>
       </div>
-
-      {selectedSeats.length > 0 && (
-        <div className="px-4 mt-4 text-center">
-          <p className="text-[10px] text-slate-400 font-bold">
-            Selected Seats: <span className="text-[#5e4feb] font-black">{selectedSeats.join(", ")}</span>
-          </p>
-        </div>
-      )}
 
       <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 max-w-[390px] w-full bg-white/95 backdrop-blur-md px-4 py-3 border-t border-slate-100 z-40">
         <button
@@ -259,3 +262,4 @@ const SeatSelectionPage: React.FC = () => {
 };
 
 export default SeatSelectionPage;
+

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
-import { ArrowLeft, Calendar, Clock, MapPin, XCircle } from "lucide-react";
+import { ArrowLeft, XCircle } from "lucide-react";
 import { API_URL } from "../config";
 import BottomNavigation from "../components/common/BottomNavigation";
+import TicketQRCode from "../components/common/TicketQRCode";
+import { applyMovieArtwork } from "../utils/movieArtwork";
 
 interface Movie {
   _id: string;
@@ -39,33 +41,22 @@ interface Booking {
   createdAt: string;
 }
 
-const QRCode: React.FC = () => {
-  return (
-    <svg width="64" height="64" viewBox="0 0 100 100" className="bg-white p-1 rounded-lg text-black border border-slate-100">
-      <rect x="5" y="5" width="25" height="25" fill="currentColor" />
-      <rect x="10" y="10" width="15" height="15" fill="white" />
-      <rect x="13" y="13" width="9" height="9" fill="currentColor" />
-      <rect x="70" y="5" width="25" height="25" fill="currentColor" />
-      <rect x="75" y="10" width="15" height="15" fill="white" />
-      <rect x="78" y="13" width="9" height="9" fill="currentColor" />
-      <rect x="5" y="70" width="25" height="25" fill="currentColor" />
-      <rect x="10" y="75" width="15" height="15" fill="white" />
-      <rect x="13" y="78" width="9" height="9" fill="currentColor" />
-      <rect x="70" y="70" width="10" height="10" fill="currentColor" />
-      <rect x="73" y="73" width="4" height="4" fill="white" />
-      <rect x="75" y="75" width="2" height="2" fill="currentColor" />
-      <rect x="35" y="5" width="5" height="5" fill="currentColor" /><rect x="45" y="5" width="10" height="5" fill="currentColor" /><rect x="60" y="5" width="5" height="5" fill="currentColor" />
-      <rect x="35" y="15" width="15" height="5" fill="currentColor" /><rect x="55" y="15" width="5" height="5" fill="currentColor" />
-      <rect x="40" y="25" width="5" height="5" fill="currentColor" /><rect x="50" y="25" width="15" height="5" fill="currentColor" />
-      <rect x="5" y="35" width="5" height="15" fill="currentColor" /><rect x="20" y="35" width="10" height="5" fill="currentColor" /><rect x="35" y="35" width="5" height="5" fill="currentColor" /><rect x="45" y="35" width="15" height="5" fill="currentColor" /><rect x="70" y="35" width="5" height="5" fill="currentColor" /><rect x="80" y="35" width="15" height="5" fill="currentColor" />
-      <rect x="10" y="45" width="5" height="5" fill="currentColor" /><rect x="25" y="45" width="5" height="5" fill="currentColor" /><rect x="40" y="45" width="10" height="5" fill="currentColor" /><rect x="60" y="45" width="5" height="5" fill="currentColor" /><rect x="75" y="45" width="10" height="5" fill="currentColor" />
-      <rect x="5" y="55" width="15" height="5" fill="currentColor" /><rect x="30" y="55" width="5" height="5" fill="currentColor" /><rect x="50" y="55" width="15" height="5" fill="currentColor" /><rect x="70" y="55" width="5" height="5" fill="currentColor" /><rect x="85" y="55" width="10" height="5" fill="currentColor" />
-      <rect x="35" y="70" width="10" height="5" fill="currentColor" /><rect x="55" y="70" width="5" height="5" fill="currentColor" />
-      <rect x="35" y="80" width="5" height="10" fill="currentColor" /><rect x="45" y="80" width="10" height="5" fill="currentColor" /><rect x="60" y="80" width="5" height="5" fill="currentColor" /><rect x="85" y="80" width="10" height="5" fill="currentColor" />
-      <rect x="50" y="90" width="15" height="5" fill="currentColor" /><rect x="75" y="90" width="5" height="5" fill="currentColor" />
-    </svg>
-  );
-};
+const formatShowDate = (date: string) =>
+  new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+const formatTransactionDate = (date: string) =>
+  new Date(date).toLocaleString("en-IN", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 
 const BookingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -80,7 +71,7 @@ const BookingsPage: React.FC = () => {
     if (!user || !user.id) return;
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/api/bookings?userId=${user.id}`);
+      const res = await fetch(API_URL + "/api/bookings?userId=" + user.id);
       const result = await res.json();
       if (result.success) {
         setBookings(result.data);
@@ -109,10 +100,10 @@ const BookingsPage: React.FC = () => {
     try {
       setCancellingId(id);
       if (!user?.id) return;
-      const res = await fetch(`${API_URL}/api/bookings/${id}/cancel`, {
+      const res = await fetch(API_URL + "/api/bookings/" + id + "/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id })
+        body: JSON.stringify({ userId: user.id }),
       });
       const result = await res.json();
       if (result.success) {
@@ -135,159 +126,136 @@ const BookingsPage: React.FC = () => {
     return activeTab === "bookings" ? isActive : !isActive;
   });
 
+  const tabClass = (tab: "bookings" | "past") =>
+    "h-12 flex-1 border-b-2 text-sm font-black transition-colors " +
+    (activeTab === tab ? "border-[#5e4feb] text-slate-950" : "border-transparent text-slate-400");
+
   return (
-    <div className="min-h-screen bg-[#f8f9fe] text-slate-900 pb-[100px] relative">
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white">
+    <div className="min-h-screen bg-[#f8f9fe] pb-[92px] text-slate-950">
+      <header className="relative flex h-[60px] items-center justify-center border-b border-slate-100 bg-white px-5">
         <button
           onClick={() => navigate("/")}
-          className="text-xs text-slate-400 flex items-center gap-1 hover:text-slate-600 font-bold"
+          className="absolute left-5 flex items-center gap-1.5 text-sm font-bold text-slate-400"
         >
-          <ArrowLeft size={14} /> Back
+          <ArrowLeft size={16} /> Back
         </button>
-        <h1 className="text-xs font-black uppercase tracking-wider text-slate-900">Tickets</h1>
-        <div className="w-8 h-8" />
-      </div>
+        <h1 className="text-sm font-black uppercase tracking-wide text-slate-950">Tickets</h1>
+      </header>
 
-      <div className="px-4 mt-4 flex border-b border-slate-100 text-xs font-semibold bg-white select-none">
-        <button
-          onClick={() => setActiveTab("bookings")}
-          className={`pb-2.5 flex-1 text-center border-b-2 transition-all ${
-            activeTab === "bookings" ? "text-slate-900 border-[#5e4feb] font-black" : "text-slate-400 border-transparent"
-          }`}
-        >
+
+      <div className="flex bg-white px-5">
+        <button type="button" onClick={() => setActiveTab("bookings")} className={tabClass("bookings")}>
           My Bookings
         </button>
-        <button
-          onClick={() => setActiveTab("past")}
-          className={`pb-2.5 flex-1 text-center border-b-2 transition-all ${
-            activeTab === "past" ? "text-slate-900 border-[#5e4feb] font-black" : "text-slate-400 border-transparent"
-          }`}
-        >
+        <button type="button" onClick={() => setActiveTab("past")} className={tabClass("past")}>
           Past Bookings
         </button>
       </div>
 
-      <div className="px-4 mt-6">
+      <main className="px-5 pt-7">
         {loading ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-7">
             {[1, 2].map((n) => (
-              <div key={n} className="h-[220px] bg-slate-100 rounded-3xl animate-pulse" />
+              <div key={n} className="h-[520px] animate-pulse rounded-md bg-white shadow-sm" />
             ))}
           </div>
         ) : error ? (
-          <div className="py-8 text-center text-xs text-red-500 bg-red-50 rounded-2xl border border-red-100 px-3">
+          <div className="rounded-2xl border border-red-100 bg-red-50 px-3 py-8 text-center text-xs text-red-500">
             {error}
           </div>
         ) : displayedBookings.length === 0 ? (
-          <div className="py-12 text-center text-xs text-slate-400 font-semibold">
+          <div className="py-12 text-center text-xs font-semibold text-slate-400">
             {activeTab === "past" ? "No past or cancelled bookings found." : "No active bookings found."}
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-7">
             {displayedBookings.map((booking) => {
               const showtime = booking.showtimeId;
-              const movie = showtime?.movieId;
+              const movie = showtime?.movieId ? applyMovieArtwork(showtime.movieId) : null;
               if (!showtime || !movie) return null;
 
-              const showDate = new Date(showtime.date).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric"
-              });
-
-              const transactionDate = new Date(booking.createdAt).toLocaleString("en-IN", {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-              });
+              const transactionCode = booking.transactionId
+                ? "TXN - " + booking.transactionId.slice(-6).toUpperCase()
+                : "TXN - 574928";
 
               return (
-                <div
+                <article
                   key={booking._id}
-                  className="bg-white text-slate-900 rounded-3xl overflow-hidden shadow-sm border border-slate-100 flex flex-col"
+                  className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_1px_6px_rgba(15,23,42,0.14)]"
                 >
-                  <div className="relative h-[110px] bg-slate-200">
-                    <img
-                      src={movie.bannerUrl}
-                      alt={movie.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/35" />
-                    <div className="absolute bottom-3 left-4">
-                      <span className="px-1.5 py-0.5 rounded bg-[#5e4feb] text-white text-[8px] font-black uppercase">
-                        {showtime.format}
-                      </span>
-                      <h2 className="text-sm font-black text-slate-900 mt-1">{movie.title}</h2>
-                    </div>
-                  </div>
+                  <img
+                    src={movie.posterUrl || movie.bannerUrl}
+                    alt={movie.title}
+                    className="h-[180px] w-full object-cover object-center"
+                  />
 
-                  <div className="p-4 flex flex-col gap-3">
-                    <div className="flex items-start justify-between gap-3 text-[10px]">
-                      <div className="flex-1 flex flex-col gap-2 min-w-0">
-                        <div className="flex items-center gap-1 text-slate-500 font-medium">
-                          <MapPin size={11} className="text-[#5e4feb] flex-shrink-0" />
-                          <span className="font-bold truncate text-slate-800">{showtime.theatreName}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-slate-500 font-medium">
-                          <Calendar size={11} className="text-[#5e4feb] flex-shrink-0" />
-                          <span className="font-bold text-slate-800">{showDate}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-slate-500 font-medium">
-                          <Clock size={11} className="text-[#5e4feb] flex-shrink-0" />
-                          <span className="font-bold text-slate-800">Screen 1 • {showtime.time}</span>
-                        </div>
-                        <div className="mt-1 pt-1.5 border-t border-slate-50">
-                          <span className="text-slate-400 block font-bold text-[8px]">SEATS</span>
-                          <span className="text-sm font-black text-[#5e4feb] mt-0.5 block">
-                            {booking.seats.join(", ")}
+                  <div className="px-5 pb-5 pt-4">
+                    <h2 className="text-[17px] font-black leading-tight text-slate-950">{movie.title}</h2>
+
+                    <div className="mt-5 grid grid-cols-2 gap-y-4 text-[13px]">
+                      <div className="font-bold text-slate-950">
+                        {showtime.theatreName}
+                      </div>
+                      <div className="font-bold text-slate-950 text-right">
+                        Screen 1 - 2D
+                      </div>
+
+                      <div className="font-semibold text-slate-500">
+                        {formatShowDate(showtime.date)}
+                      </div>
+                      <div className="font-semibold text-slate-500 text-right">
+                        {showtime.time}
+                      </div>
+
+                      <div className="font-bold text-slate-950 mt-1">
+                        Seats:
+                      </div>
+                      <div className="font-bold text-slate-950 mt-1 text-right">
+                        Amount Paid:
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 -mt-2">
+                        {booking.seats.map((seat) => (
+                          <span key={seat} className="rounded bg-slate-500 px-2.5 py-0.5 text-xs font-semibold text-white">
+                            {seat}
                           </span>
-                        </div>
+                        ))}
                       </div>
-                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                        <QRCode />
-                        <span className="text-[8px] font-mono text-slate-400 mt-0.5 truncate max-w-[80px] font-semibold">
-                          {booking.transactionId}
-                        </span>
+                      <div className="font-semibold text-slate-500 text-right -mt-2">
+                        ₹{booking.totalPrice}
                       </div>
                     </div>
 
-                    <div className="border-t border-slate-50 pt-3 flex items-center justify-between">
-                      <div>
-                        <span className="text-[8px] text-slate-400 font-bold block">AMOUNT PAID</span>
-                        <span className="text-xs font-black text-slate-900">₹{booking.totalPrice}</span>
+                    <div className="mt-6 flex justify-between items-start">
+                      <div className="flex flex-col items-start">
+                        {booking.paymentStatus === "paid" && showtime.date >= today ? (
+                          <button
+                            onClick={() => handleCancelBooking(booking._id)}
+                            disabled={cancellingId === booking._id}
+                            className="rounded border border-red-500 px-3 py-1.5 text-[11px] font-bold text-red-500 transition-colors hover:bg-red-50 disabled:opacity-60 mb-3"
+                          >
+                            {cancellingId === booking._id ? "Cancelling..." : "Cancel Booking"}
+                          </button>
+                        ) : (
+                          <span className="rounded bg-slate-100 px-3 py-1.5 text-[11px] font-bold uppercase text-slate-500 mb-3">
+                            {booking.paymentStatus === "cancelled" ? "Cancelled" : "Past"}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-slate-400">Transaction Date:</span>
+                        <span className="text-[11px] text-slate-400">{formatTransactionDate(booking.createdAt)}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[8px] text-slate-400 font-bold block">TRANSACTION DATE</span>
-                        <span className="text-[9px] font-semibold text-slate-500">{transactionDate}</span>
+                      
+                      <div className="flex flex-col items-end">
+                        <TicketQRCode size={75} />
                       </div>
-                    </div>
-
-                    <div className="border-t border-slate-50 pt-3 flex justify-end">
-                      {booking.paymentStatus === "paid" && showtime.date >= today ? (
-                        <button
-                          onClick={() => handleCancelBooking(booking._id)}
-                          disabled={cancellingId === booking._id}
-                          className="px-3.5 py-1.5 rounded-xl border border-red-500 hover:bg-red-50 text-red-500 text-[10px] font-black transition-all flex items-center gap-1.5"
-                        >
-                          <XCircle size={12} />
-                          {cancellingId === booking._id ? "Cancelling..." : "Cancel Booking"}
-                        </button>
-                      ) : (
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-[9px] font-black uppercase text-slate-500">
-                          {booking.paymentStatus === "cancelled" ? "Cancelled" : "Past"}
-                        </span>
-                      )}
                     </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
         )}
-      </div>
+      </main>
 
       <BottomNavigation />
     </div>

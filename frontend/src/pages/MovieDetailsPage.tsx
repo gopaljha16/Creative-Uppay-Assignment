@@ -6,6 +6,7 @@ import { API_URL } from "../config";
 import type { RootState } from "../store/store";
 import { selectMovie, selectFormat } from "../store/bookingSlice";
 import BottomNavigation from "../components/common/BottomNavigation";
+import { applyMovieArtwork } from "../utils/movieArtwork";
 
 interface Movie {
   _id: string;
@@ -46,8 +47,9 @@ const MovieDetailsPage: React.FC = () => {
           const res = await fetch(`${API_URL}/api/movies/${id}`);
           const result = await res.json();
           if (result.success) {
-            setMovieState(result.data);
-            dispatch(selectMovie(result.data));
+            const normalizedMovie = applyMovieArtwork(result.data);
+            setMovieState(normalizedMovie);
+            dispatch(selectMovie(normalizedMovie));
           } else {
             setError(result.message || "Failed to load movie details.");
           }
@@ -85,12 +87,8 @@ const MovieDetailsPage: React.FC = () => {
     );
   }
 
-  const detailArtwork: Record<string, string> = {
-    "Meg 2: The Trench": "/booking/a57fc1c3fabe76e17c91003a155cf85d5a12aeb3.jpg",
-    "The Nun II": "/homepage/faf2f1614ca7c1750dda26167cdc60459cf68fed.png",
-  };
-
-  const heroImage = detailArtwork[movie.title] || movie.bannerUrl || movie.posterUrl;
+  const normalizedMovie = applyMovieArtwork(movie);
+  const heroImage = normalizedMovie.bannerUrl || normalizedMovie.posterUrl;
 
   const handleFormatSelect = (fmt: string) => {
     dispatch(selectFormat(fmt));
@@ -146,7 +144,7 @@ const MovieDetailsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-black text-slate-900 leading-tight">{movie.title}</h1>
             <span className="px-1.5 py-0.5 rounded-md border border-[#5e4feb]/30 text-[#5e4feb] text-[9px] font-black uppercase tracking-wide">
-              {movie.rating}
+              {normalizedMovie.rating}
             </span>
           </div>
           <div className="flex items-center gap-1 text-slate-800 text-xs font-bold flex-shrink-0">

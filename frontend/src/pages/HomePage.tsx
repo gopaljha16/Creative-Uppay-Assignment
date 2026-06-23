@@ -5,6 +5,7 @@ import { MapPin, Search, Star } from "lucide-react";
 import BottomNavigation from "../components/common/BottomNavigation";
 import { selectMovie } from "../store/bookingSlice";
 import { API_URL } from "../config";
+import { applyMovieArtwork } from "../utils/movieArtwork";
 
 interface Movie {
   _id: string;
@@ -39,7 +40,7 @@ const movieTemplates: Movie[] = [
   {
     _id: "m2",
     title: "The Nun II",
-    bannerUrl: "",
+    bannerUrl: "/homepage/faf2f1614ca7c1750dda26167cdc60459cf68fed.png",
     posterUrl: "/homepage/faf2f1614ca7c1750dda26167cdc60459cf68fed.png",
     description: "Sister Irene once again comes face-to-face with Valak, the demon nun.",
     genre: "Horror",
@@ -122,12 +123,13 @@ const HomePage: React.FC = () => {
         }
 
         const hydratedMovies = result.data.map((movie: Movie) => {
-          const artwork = movieTemplates.find((template) => template.title === movie.title);
-          return {
+          const template = movieTemplates.find((item) => item.title === movie.title);
+          return applyMovieArtwork({
             ...movie,
-            bannerUrl: artwork?.bannerUrl || artwork?.posterUrl || movie.bannerUrl,
-            posterUrl: artwork?.posterUrl || movie.posterUrl,
-          };
+            bannerUrl: template?.bannerUrl || movie.bannerUrl,
+            posterUrl: template?.posterUrl || movie.posterUrl,
+            rating: template?.rating || movie.rating,
+          });
         });
 
         if (!cancelled) setMovieList(hydratedMovies);
@@ -253,3 +255,4 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+

@@ -35,22 +35,27 @@ export function useSignupForm(ensureSignedOut: () => Promise<void>) {
       try {
         await ensureSignedOut();
 
-        await signUp.create({
+        const result = await signUp.create({
           firstName: name.split(" ")[0],
           lastName: name.split(" ").slice(1).join(" ") || "",
           emailAddress: email.trim(),
           password,
         });
 
-        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-        setPendingVerification(true);
+        if (result.status === "complete") {
+          await setActive({ session: result.createdSessionId });
+          navigate("/");
+        } else {
+          await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+          setPendingVerification(true);
+        }
       } catch (err) {
         setError(extractClerkError(err, "Sign up failed. Please try again."));
       } finally {
         setLoading(false);
       }
     },
-    [name, email, password, confirmPassword, isLoaded, signUp, ensureSignedOut]
+    [name, email, password, confirmPassword, isLoaded, signUp, ensureSignedOut, setActive, navigate]
   );
 
   const handleVerify = useCallback(

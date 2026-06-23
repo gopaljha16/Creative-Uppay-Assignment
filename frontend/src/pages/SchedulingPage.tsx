@@ -6,6 +6,7 @@ import { API_URL } from "../config";
 import type { RootState } from "../store/store";
 import { selectDate, selectTheatre, selectFormat, selectShowtime } from "../store/bookingSlice";
 import BottomNavigation from "../components/common/BottomNavigation";
+import { applyMovieArtwork } from "../utils/movieArtwork";
 
 interface Showtime {
   _id: string;
@@ -150,12 +151,17 @@ const SchedulingPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#f8f9fe] text-slate-900 flex flex-col items-center justify-center p-4">
         <p className="text-xs text-slate-500">No movie selected.</p>
-        <button onClick={() => navigate("/")} className="mt-3 px-4 py-2 bg-[#5e4feb] text-white text-xs rounded-xl">
+        <button onClick={() => navigate("/")} className="mt-3 px-6 py-2 bg-[#5e4feb] text-white text-xs rounded-xl">
           Go Home
         </button>
       </div>
     );
   }
+
+  const displayMovie = applyMovieArtwork(movie);
+  const scheduleHeroImage = displayMovie.title === "Meg 2: The Trench"
+    ? "/booking/a57fc1c3fabe76e17c91003a155cf85d5a12aeb3.jpg"
+    : displayMovie.bannerUrl || displayMovie.posterUrl;
 
   const uniqueTheatres = Array.from(new Set(showtimes.map((s) => s.theatreName))).map((name) => {
     const matches = showtimes.filter((s) => s.theatreName === name);
@@ -204,43 +210,54 @@ const SchedulingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f9fe] text-slate-900 pb-[140px] relative">
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white">
-        <button
-          onClick={() => {
-            if (step === "time") {
-              setStep("theatre");
-            } else {
-              navigate(`/movie/${movie._id}`);
-            }
-          }}
-          className="text-xs text-slate-400 flex items-center gap-1 hover:text-slate-600 font-bold"
-        >
-          <ArrowLeft size={14} /> Back
-        </button>
-        <button onClick={() => navigate("/")} className="text-xs text-slate-400 hover:text-slate-600 font-bold">
-          Cancel
-        </button>
-      </div>
-
-      <div className="px-4 py-3 bg-white">
-        <h1 className="text-sm font-black text-slate-900">{movie.title}</h1>
-        <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
-          {step === "theatre" ? movie.genre : `${selectedTheatre} • ${formattedDateHeader}`}
-        </p>
-      </div>
-
-      <div className="w-full bg-slate-100 h-1.5 relative">
-        <div
-          className="bg-[#5e4feb] h-1.5 absolute left-0 top-0 transition-all duration-300"
-          style={{ width: step === "theatre" ? "25%" : "50%" }}
+      <section className="relative h-[162px] overflow-hidden bg-slate-900 text-white">
+        <img
+          src={scheduleHeroImage}
+          alt={displayMovie.title}
+          className="absolute inset-0 h-full w-full object-cover"
         />
+        <div className="absolute inset-0 bg-black/50" />
+
+        <div className="relative z-10 flex items-center justify-between px-6 pt-10">
+          <button
+            onClick={() => {
+              if (step === "time") {
+                setStep("theatre");
+              } else {
+                navigate(`/movie/${movie._id}`);
+              }
+            }}
+            className="flex items-center gap-2 text-sm font-bold text-white"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+          <button onClick={() => navigate("/")} className="text-sm font-bold text-white">
+            Cancel
+          </button>
+        </div>
+
+        <div className="absolute bottom-6 left-6 right-6 z-10">
+          <h1 className="text-xl font-black leading-tight text-white">{displayMovie.title}</h1>
+          <p className="mt-1 text-sm font-medium text-white">
+            {step === "theatre" ? displayMovie.genre : selectedTheatre + "  ?  " + formattedDateHeader}
+          </p>
+        </div>
+      </section>
+
+      <div className="bg-white px-6 py-4">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full bg-[#5e4feb] transition-all duration-300"
+            style={{ width: step === "theatre" ? "18%" : "42%" }}
+          />
+        </div>
       </div>
 
       {step === "theatre" && (
-        <div className="mt-4">
-          <h2 className="px-4 text-xs font-black uppercase tracking-wider text-slate-400">Select Movie Theatre</h2>
+        <div className="mt-0">
+          <h2 className="px-6 text-lg font-black text-slate-950">Select Movie Theatre</h2>
 
-          <div className="mt-3 overflow-x-auto flex gap-2.5 px-4 pb-2 scrollbar-none">
+          <div className="mt-3 overflow-x-auto flex gap-2.5 px-6 pb-2 scrollbar-none">
             {dates.map((d) => {
               const isSelected = selectedDate === d.dateStr;
               return (
@@ -260,7 +277,7 @@ const SchedulingPage: React.FC = () => {
             })}
           </div>
 
-          <div className="px-4 mt-5 flex flex-col gap-3">
+          <div className="px-6 mt-5 flex flex-col gap-3">
             {loading ? (
               [1, 2, 3].map((n) => (
                 <div key={n} className="h-16 w-full bg-slate-100 rounded-2xl animate-pulse" />
@@ -293,8 +310,8 @@ const SchedulingPage: React.FC = () => {
       )}
 
       {step === "time" && (
-        <div className="mt-4 px-4">
-          <h2 className="text-xs font-black uppercase tracking-wider text-slate-400">Choose Schedule</h2>
+        <div className="mt-0 px-6">
+          <h2 className="text-lg font-black text-slate-950">Choose Schedule</h2>
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex gap-2">
@@ -375,7 +392,7 @@ const SchedulingPage: React.FC = () => {
             )}
           </div>
 
-          <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 max-w-[390px] w-full bg-white/95 backdrop-blur-md px-4 py-3 border-t border-slate-100 z-40">
+          <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 max-w-[390px] w-full bg-white/95 backdrop-blur-md px-6 py-3 border-t border-slate-100 z-40">
             <button
               onClick={handleGetTickets}
               disabled={!selectedShowtimeState}
