@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
-import { ArrowLeft, XCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { API_URL } from "../config";
 import BottomNavigation from "../components/common/BottomNavigation";
 import TicketQRCode from "../components/common/TicketQRCode";
@@ -241,6 +241,7 @@ const BookingsPage: React.FC = () => {
                             {booking.paymentStatus === "cancelled" ? "Cancelled" : "Past"}
                           </span>
                         )}
+                        <span className="text-[11px] font-bold text-slate-600 mb-1">{transactionCode}</span>
                         <span className="text-[11px] text-slate-400">Transaction Date:</span>
                         <span className="text-[11px] text-slate-400">{formatTransactionDate(booking.createdAt)}</span>
                       </div>
