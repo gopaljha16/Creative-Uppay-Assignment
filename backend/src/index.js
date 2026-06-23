@@ -17,8 +17,13 @@ database()
     console.error("Database connection failed:", err);
   });
 
+let allowedOrigin = process.env.FRONTEND_URL || "*";
+if (allowedOrigin !== "*") {
+  allowedOrigin = allowedOrigin.replace(/\/$/, ""); // Remove trailing slash if present
+}
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*"
+  origin: [allowedOrigin, "http://localhost:5173", "http://localhost:3000"]
 }));
 app.use(express.json());
 
